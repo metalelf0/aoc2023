@@ -10,7 +10,12 @@ class Matrix
   def value_at(row, col)
     # This is to prevent negative indexes from fetching data from the end of the array
     return nil if row.negative? || col.negative?
-    @data.fetch(row).fetch(col) rescue nil
+
+    begin
+      @data.fetch(row).fetch(col)
+    rescue StandardError
+      nil
+    end
   end
 
   def surrounding(row, col)
@@ -42,8 +47,8 @@ class Matrix
         end
 
         if surroundings_of_all_digits
-          .flatten
-          .all? { |n| (n.match?(/\d/)) || (n == "." ) }
+           .flatten
+           .all? { |n| n.match?(/\d/) || (n == '.') }
           p "REJECTING #{number_value} because #{surroundings_of_all_digits.flatten.join}"
         else
           p "INCLUDING #{number_value} because #{surroundings_of_all_digits.flatten.join}"
@@ -56,7 +61,7 @@ class Matrix
   end
 end
 
-matrix = Matrix.new source_file: "input.txt"
+matrix = Matrix.new source_file: 'input.txt'
 
 # raise "Unexpected!" unless '4' == matrix.value_at(0, 0)
 # raise "Unexpected!" unless nil == matrix.value_at(1000, 1000)
