@@ -32,8 +32,8 @@ def build_ranges(lines:)
   lines[1..-1].map do |line|
     destination_range_start, source_range_start, range_length = line.split(" ").map(&:to_i)
     {
-      to: Range.new(destination_range_start, destination_range_start + range_length),
-      from: Range.new(source_range_start, source_range_start + range_length)
+      to: [destination_range_start, destination_range_start + range_length],
+      from: [source_range_start, source_range_start + range_length]
     }
   end
 end
@@ -50,9 +50,9 @@ end
 def find_target(number:, conversion_ranges: {})
   return source_number if conversion_ranges.empty?
   conversion_ranges.each do |conversion_range|
-    if conversion_range[:from].include? number
-      index = conversion_range[:from].to_a.index(number)
-      return conversion_range[:to].to_a.at(index)
+    if conversion_range[:from][0] <= number && number <= conversion_range[:from][1]
+      index = number - conversion_range[:from][0]
+      return conversion_range[:to][0] + index
     end
   end
   return number
@@ -72,3 +72,5 @@ conversions.each do |conversion_ranges|
 end
 
 p seeds
+
+p seeds.min
