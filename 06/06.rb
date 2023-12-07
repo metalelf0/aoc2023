@@ -17,7 +17,7 @@ def parse_input_part_2(file:)
   lines = File.readlines(file)
   duration = lines.shift.split(":").last.split(" ").join.to_i
   target_distance = lines.shift.split(":").last.split(" ").join.to_i
-  [ {duration: , target_distance:  } ]
+  [ { duration: , target_distance: } ]
 end
 
 winning_combinations_size = parse_input_part_2(file: "input.txt").map do |race|
