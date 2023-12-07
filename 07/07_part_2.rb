@@ -17,21 +17,22 @@ class Hand
   end
 
   def power_combination
-    return self.combination unless cards.chars.include?("J")
+    return combination unless cards.chars.include?('J')
+
     highest_combination = :one_pair
-    jokers_count = cards.chars.count("J")
+    jokers_count = cards.chars.count('J')
     possible_joker_values = Game::CARDS_WITHOUT_J.repeated_permutation(jokers_count)
     possible_joker_values.each do |substitutions|
       new_hand_cards = cards
       substitutions.each do |substitute_char|
-        new_hand_cards = new_hand_cards.sub("J", substitute_char)
+        new_hand_cards = new_hand_cards.sub('J', substitute_char)
       end
-      new_hand_combination = Hand.new(cards: new_hand_cards, bid: bid).combination
+      new_hand_combination = Hand.new(cards: new_hand_cards, bid:).combination
       if Game::COMBINATIONS.index(new_hand_combination) > Game::COMBINATIONS.index(highest_combination)
         highest_combination = new_hand_combination
       end
     end
-    return highest_combination
+    highest_combination
   end
 
   def combination
@@ -58,23 +59,25 @@ class Hand
       Game::CARDS.index(cards.chars[1]),
       Game::CARDS.index(cards.chars[2]),
       Game::CARDS.index(cards.chars[3]),
-      Game::CARDS.index(cards.chars[4]),
-  ]
+      Game::CARDS.index(cards.chars[4])
+    ]
   end
 end
 
 def run_tests
   # --- combination
-  raise 'Failed test: :five_of_a_kind' unless :five_of_a_kind == Hand.new(cards: 'AAAAA').combination
-  raise 'Failed test: :four_of_a_kind' unless :four_of_a_kind == Hand.new(cards: 'AABAA').combination
-  raise 'Failed test: :full_house' unless :full_house == Hand.new(cards: 'AABBB').combination
-  raise 'Failed test: :three_of_a_kind' unless :three_of_a_kind == Hand.new(cards: '12BBB').combination
-  raise 'Failed test: :two_pair' unless :two_pair == Hand.new(cards: '2323A').combination
-  raise 'Failed test: :one_pair' unless :one_pair == Hand.new(cards: '2234A').combination
-  raise 'Failed test: :high_card' unless :high_card == Hand.new(cards: '23457').combination
+  raise 'Failed test: :five_of_a_kind' unless Hand.new(cards: 'AAAAA').combination == :five_of_a_kind
+  raise 'Failed test: :four_of_a_kind' unless Hand.new(cards: 'AABAA').combination == :four_of_a_kind
+  raise 'Failed test: :full_house' unless Hand.new(cards: 'AABBB').combination == :full_house
+  raise 'Failed test: :three_of_a_kind' unless Hand.new(cards: '12BBB').combination == :three_of_a_kind
+  raise 'Failed test: :two_pair' unless Hand.new(cards: '2323A').combination == :two_pair
+  raise 'Failed test: :one_pair' unless Hand.new(cards: '2234A').combination == :one_pair
+  raise 'Failed test: :high_card' unless Hand.new(cards: '23457').combination == :high_card
 
   # --- power_combination
-  raise 'Failed test: :power_combination_at_least_one_pair' unless :one_pair == Hand.new(cards: '2345J').power_combination
+  unless Hand.new(cards: '2345J').power_combination == :one_pair
+    raise 'Failed test: :power_combination_at_least_one_pair'
+  end
 
   # --- Ranking
   raise 'Failed test: first is higher' unless Hand.new(cards: 'AAAAA') > Hand.new(cards: '12345')
@@ -84,14 +87,14 @@ def run_tests
   raise 'Failed test: lower first card' unless Hand.new(cards: '23456') < Hand.new(cards: '34567')
 
   # --- Create with bid
-  raise 'Failed test: create with big' unless 123 == Hand.new(cards: '23457', bid: 123).bid
+  raise 'Failed test: create with big' unless Hand.new(cards: '23457', bid: 123).bid == 123
 end
 
 run_tests
 
 hands = File.readlines('input.txt')
             .map { |line| line.split(' ') }
-            .map { |cards, bid| Hand.new(cards: cards, bid: bid.to_i) }
+            .map { |cards, bid| Hand.new(cards:, bid: bid.to_i) }
 
 # puts hands.sort.map { |hand| "#{hand.cards} => #{hand.combination} (#{hand.bid})"}
 
