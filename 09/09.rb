@@ -1,4 +1,12 @@
 #!/usr/bin/env ruby
+#
+# This solution isn't very elegant as the methods "#compute_all_rows",
+# "#compute_all_increments" and "#compute_all_previous_increments" operate on
+# the same data, so to get correct results a new Sequence instance has to be
+# instantiated every time before calling #next_value or #previous_value. It's
+# enough for the sake of the AoC and it performs decently, so... time to get
+# outside :)
+
 class Sequence
   attr_accessor :first_row, :rows
 
